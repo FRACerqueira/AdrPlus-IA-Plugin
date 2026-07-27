@@ -5,8 +5,8 @@ Lets Claude Code manage [Architecture Decision Records](https://adr.github.io/) 
 ## Key concepts
 
 - **Architecture Decision Records (ADR)** — the plain-Markdown files this plugin manages. Every command in `manage-adrs`, and every check `adr-auditor` runs, operates on ADRs as defined by `adrplus`'s own naming and header conventions (see `adr-config.adrplus`).
-- **Claude Code Plugin Marketplace** — the mechanism (`/plugin marketplace add`, `/plugin install`) this plugin is distributed through. See [Install](#install-local-marketplace-not-yet-published) below for how `marketplace.json` and `plugin.json` are wired together.
-- **Claude Code Plugin Permissions** — the Bash permission Claude needs to actually run `adrplus` on your behalf; a plugin manifest cannot grant this itself, so you configure it in your own `.claude/settings.json` (see [Install](#install-local-marketplace-not-yet-published)).
+- **Claude Code Plugin Marketplace** — the mechanism (`/plugin marketplace add`, `/plugin install`) this plugin is distributed through. See [Install](#install) below for how `marketplace.json` and `plugin.json` are wired together.
+- **Claude Code Plugin Permissions** — the Bash permission Claude needs to actually run `adrplus` on your behalf; a plugin manifest cannot grant this itself, so you configure it in your own `.claude/settings.json` (see [Install](#install)).
 
 ## What's included
 
@@ -24,11 +24,17 @@ adrplus --version
 
 **Requires `adrplus` v1.0.0-beta or later.** Earlier versions unconditionally draw a startup banner and can fall into an interactive first-run wizard on every command — both crash or hang when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). v1.0.0-beta is the first release safe for this plugin. Last tested: v1.0.0-beta — see `.github/workflows/validate.yml` for the automated compatibility check run against that version.
 
-## Install (local marketplace, not yet published)
+## Install
 
-This plugin currently lives only on disk, not on GitHub. From a Claude Code session:
+From a Claude Code session:
 ```
-/plugin marketplace add C:\Sources\adrplus-claude-plugin
+/plugin marketplace add FRACerqueira/AdrPlus-Claude-Plugin
+/plugin install adrplus@adrplus-tools
+```
+
+Or, to work from a local clone instead:
+```
+/plugin marketplace add /path/to/your/local/clone
 /plugin install adrplus@adrplus-tools
 ```
 
@@ -42,14 +48,6 @@ Once installed, Claude will need permission to run `adrplus` via Bash. If you do
 ```
 (A plugin cannot grant this for you — see the [plugin permissions docs](https://code.claude.com/docs/en/plugins-reference.md).)
 
-## Publishing later
-
-To share this beyond your own machine, push this folder to a Git repo (e.g. `FRACerqueira/adrplus-claude-plugin`) and update `.claude-plugin/marketplace.json`'s plugin `source` if you split the marketplace from the plugin. Others would then run:
-```
-/plugin marketplace add FRACerqueira/adrplus-claude-plugin
-/plugin install adrplus@adrplus-tools
-```
-
 ## Versioning
 
-`plugin.json` and `marketplace.json` both pin `0.1.0`. Bump both together on every meaningful change — Claude Code only picks up updates when the version changes (or, if you drop the `version` field, on every new commit).
+`plugin.json` and `marketplace.json` are kept in sync — bump both together on every meaningful change. Claude Code only picks up updates when the version changes (or, if you drop the `version` field, on every new commit).
