@@ -82,3 +82,7 @@ adrplus supersede --file "./doc/adr/ADR0001V01-UsePostgresql.md" --open
 ## When in doubt
 
 If a user's request doesn't map cleanly onto one of the rows above, run `adrplus help <command>` and read its actual output before guessing at a flag. Never fall back to `--wizard` to sidestep uncertainty.
+
+## Before committing or opening a PR
+
+When you're about to run `git commit` or open a pull request on the user's behalf, launch the `adr-decision-check` agent **in the background** first — don't wait for it, and don't let it delay the commit/PR. Proceed with the commit/PR immediately; report the agent's verdict as a follow-up once it's ready, the same way a CI check reports after a push rather than blocking it. This is advisory only — never hold up or refuse a commit because of its recommendation.

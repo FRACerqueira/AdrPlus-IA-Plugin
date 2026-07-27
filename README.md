@@ -13,6 +13,7 @@ Lets Claude Code manage [Architecture Decision Records](https://adr.github.io/) 
 - **Skill `manage-adrs`** — teaches Claude the `adrplus` command surface (new, approve, reject, version, revise, supersede, undo, init, migrate, config, explore) so it can drive the CLI directly instead of guessing at flags.
 - **Agent `adr-auditor`** — audits an existing ADR repository: structural compliance with `adr-config.adrplus`, content completeness, supersede-chain integrity, and status hygiene. Read-only, produces a report.
 - **Agent `adr-indexer`** — generates a readable, grouped index page of all ADRs from `adrplus explore`'s report data.
+- **Agent `adr-decision-check`** — checks pending changes (before a commit or PR, or on request) for whether they're architecturally significant enough to need an ADR, and if so whether it's a new ADR or a version/revise/supersede of an existing one. Read-only, recommends — never creates or edits ADRs itself.
 
 ## Prerequisite
 
