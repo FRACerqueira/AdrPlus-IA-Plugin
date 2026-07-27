@@ -20,6 +20,8 @@ adrplus --version
 ```
 If this fails, tell the user to run `dotnet tool install -g adrplus` (requires .NET 8+ runtime) before continuing.
 
+**Requires v1.0.0-beta or later.** Earlier versions draw a startup banner and can fall into an interactive first-run wizard on every command, unconditionally — both crash or hang when you (Claude) run them via Bash, even with all the right non-interactive flags. If a command you run this way fails with `"The handle is invalid"` or similar console errors instead of a normal error message, tell the user their `adrplus` is too old and needs upgrading (`dotnet tool update -g adrplus`).
+
 ## Two config files, one hard rule
 
 - `adrplus.json` — application settings: `language`, `comandopenadr` (command to open a file, e.g. `code {0}`), `withoutargs`.

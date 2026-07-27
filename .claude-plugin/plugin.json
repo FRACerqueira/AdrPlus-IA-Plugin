@@ -6,8 +6,8 @@
   "author": {
     "name": "Fernando Cerqueira"
   },
-  "homepage": "https://github.com/FRACerqueira/AdrPlus",
-  "repository": "https://github.com/FRACerqueira/AdrPlus",
+  "homepage": "https://github.com/FRACerqueira/adrplus-claude-plugin",
+  "repository": "https://github.com/FRACerqueira/adrplus-claude-plugin",
   "license": "MIT",
   "keywords": ["architecture", "adr", "decision-records", "adrplus"]
 }
