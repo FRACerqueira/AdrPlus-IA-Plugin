@@ -23,7 +23,7 @@ dotnet tool install -g adrplus
 adrplus --version
 ```
 
-**Requires `adrplus` v1.0.0-beta or later.** Earlier versions unconditionally draw a startup banner and can fall into an interactive first-run wizard on every command — both crash or hang when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). v1.0.0-beta is the first release safe for this plugin. Last tested: v1.0.0-beta — see `.github/workflows/validate.yml` for the automated compatibility check run against that version.
+**Requires `adrplus` v1.0.0-beta1 or later (any 1.x release, including pre-releases).** Earlier versions unconditionally draw a startup banner and can fall into an interactive first-run wizard on every command — both crash or hang when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). v1.0.0-beta1 is the first release safe for this plugin. CI always installs the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
 
 ## Install
 

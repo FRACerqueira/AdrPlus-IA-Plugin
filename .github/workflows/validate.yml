@@ -14,20 +14,21 @@ jobs:
           python-version: "3.12"
       - run: python scripts/validate_plugin.py
 
-  # Pinned to the last version this plugin was verified against (see README.md
-  # "Prerequisite"). Bump ADRPLUS_VERSION + re-verify skill/agents together
-  # whenever a new adrplus release ships - this job is what catches drift
-  # between SKILL.md's documented flags and the CLI's real --help output.
+  # Always resolves to the highest 1.x adrplus release, including pre-releases
+  # (see README.md "Prerequisite" for the minimum: 1.0.0-beta1). This job is
+  # what catches drift between SKILL.md's documented flags and the CLI's real
+  # --help output as new 1.x releases ship - bump the range's floor here (and
+  # re-verify skill/agents) only if the minimum supported version changes.
   adrplus-compat:
     runs-on: ubuntu-latest
     env:
-      ADRPLUS_VERSION: 1.0.0-beta
+      ADRPLUS_VERSION: "[1.0.0-beta1,2.0.0)"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
-      - run: dotnet tool install -g adrplus --version ${{ env.ADRPLUS_VERSION }}
+      - run: dotnet tool install -g adrplus --version "${{ env.ADRPLUS_VERSION }}"
       - run: echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
       - uses: actions/setup-python@v5
         with:

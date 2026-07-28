@@ -2,7 +2,7 @@
 """Smoke-test the installed `adrplus` CLI against the command/flag table documented
 in skills/manage-adrs/SKILL.md. Run non-interactively, exactly like Claude would via
 the Bash tool - this is what actually catches console-crash regressions (see
-CHANGELOG entries around v1.0.0-beta) and documentation drift (renamed/removed flags).
+CHANGELOG entries around v1.0.0-beta1) and documentation drift (renamed/removed flags).
 """
 
 import re
