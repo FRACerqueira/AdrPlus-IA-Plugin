@@ -38,7 +38,7 @@ Default to **no** — most changes are implementation details, not decisions. On
 - A new cross-cutting pattern (auth mechanism, error-handling strategy, deployment topology, naming/versioning scheme).
 - Content that contradicts, reverses, or meaningfully extends the decision recorded in an existing Accepted ADR.
 
-Do **not** flag: bug fixes, refactors that preserve behavior, formatting/lint changes, dependency version bumps with no behavior change, added tests, docs-only changes, or another instance of an already-established pattern (e.g. one more endpoint following the existing REST conventions).
+Do **not** flag: bug fixes, refactors that preserve behavior, formatting/lint changes, dependency version bumps with no behavior change, added tests, docs-only changes, another instance of an already-established pattern (e.g. one more endpoint following the existing REST conventions), or temporary/operational tweaks (config values, feature-flag toggles, monitoring thresholds, scaling parameters) that don't reflect a durable architectural stance.
 
 When genuinely uncertain, say so explicitly and lean toward *not* flagging — a missed ADR is cheaper to fix later than a team that starts ignoring this check because it's noisy.
 
@@ -59,4 +59,5 @@ Produce a short, scannable report:
 - **Verdict**: No ADR needed / ADR recommended.
 - **Reasoning**: one or two sentences citing the specific signal(s) from Step 3 that drove the verdict.
 - If recommended: **which command** (`new`, `version`, `revise`, or `supersede`), the related existing ADR file (if any), and a suggested title/domain/scope for the new or updated ADR.
+- If the verdict is "No ADR needed" and the signals in Step 3 were borderline rather than clear-cut, say so and mention that the user can ask you to redo the check with relaxed filters (treat borderline signals as flags rather than defaulting to no) if they suspect this decision deserves documentation after all.
 - Do not run `adrplus new`/`version`/`revise`/`supersede` yourself, and do not write any file. End by telling the user which command they (or Claude, via the `manage-adrs` skill, on their instruction) would run next.
