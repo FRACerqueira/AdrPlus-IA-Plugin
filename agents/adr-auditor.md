@@ -19,7 +19,7 @@ List every `.md` file under `folderadr` (respecting `folderbyscope` — files ma
 ## Step 3: Structural checks (per file)
 
 For each ADR file, verify:
-- **Filename matches the naming convention** built from `prefix` + `lenseq` digits + `lenversion` digits (+ `lenrevision` digits if enabled) + `separator` + title, in the configured `casetransform`. A file that doesn't match either hasn't been migrated yet (flag as "needs `adrplus migrate`") or is genuinely malformed.
+- **Filename matches the naming convention** built from `prefix` + `lenseq` digits + literal `V` + `lenversion` digits (+ literal `R` + `lenrevision` digits, only when revisions are enabled) + `separator` + title, in the configured `casetransform` (e.g. `ADR001V01-title.md`, or `ADR001V01R1-title.md` with revisions enabled). A file that doesn't match either hasn't been migrated yet (flag as "needs `adrplus migrate`") or is genuinely malformed.
 - **Header table is present and well-formed** — the `<!-- Do not remove this comment, lines and table (1-12) -->` block with the Fields/Values table (File title, Version, Revision, Scope, Domain, Created, Changed, Superseded).
 - **Status labels used in the header match the configured labels** (`statusnew`/`statusacc`/`statusrej`/`statussup`) — a file using a different word for status is either stale or hand-edited incorrectly.
 - **Scope/domain rules respected**: if `lenscope > 0`, the scope segment must be one of `scopes`; `domain` must be present unless the scope is listed in `skipdomain`.

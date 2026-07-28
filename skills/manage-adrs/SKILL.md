@@ -22,6 +22,8 @@ If this fails, tell the user to run `dotnet tool install -g adrplus` (requires .
 
 **Requires v1.0.0-beta1 or later (any 1.x release, including pre-releases).** Earlier versions draw a startup banner and can fall into an interactive first-run wizard on every command, unconditionally — both crash or hang when you (Claude) run them via Bash, even with all the right non-interactive flags. If a command you run this way fails with `"The handle is invalid"` or similar console errors instead of a normal error message, tell the user their `adrplus` is too old and needs upgrading (`dotnet tool update -g adrplus`).
 
+**Known current limitation (as of 1.0.0-beta2): `init` cannot succeed non-interactively on a genuinely fresh repository or a fresh `adrplus` install.** Two confirmed bugs, not documentation gaps: (1) every repo-touching command throws `FileNotFoundException` on a fresh install/upgrade until a machine-global template file exists, which today is only ever written by the interactive first-run wizard this skill correctly refuses to run; (2) `init --path <dir>` itself throws `DirectoryNotFoundException` on any directory whose ADR folder doesn't already exist, because it scans that folder before creating it. If you hit either, tell the user plainly that their installed `adrplus` version has this gap and stop — don't invent undocumented flags or filesystem workarounds to route around it. This note should be removed once a release fixes both (see the AdrPlus repo's issue tracker/CHANGELOG).
+
 ## Two config files, one hard rule
 
 - `adrplus.json` — application settings: `language`, `comandopenadr` (command to open a file, e.g. `code {0}`), `withoutargs`.
@@ -29,7 +31,7 @@ If this fails, tell the user to run `dotnet tool install -g adrplus` (requires .
 
 **The `config` command is ALWAYS interactive unless you pass `--file <path>` pointing to a ready-made JSON file.** There is no other non-interactive path for `config`. If you need to change a setting, write the JSON file yourself first (Write tool), then pass it with `--file`. Read the current file first (it's plain JSON in the repo root) so you only change what's needed.
 
-`init` and `migrate`, by contrast, work non-interactively out of the box with just `--path` — no `--file` needed unless you want to seed a specific config.
+`init` and `migrate`, by contrast, are designed to work non-interactively out of the box with just `--path` — no `--file` needed unless you want to seed a specific config. In practice, both still hit known limitation (1) above (the machine-global template bootstrap gap) on an install/version that's never run interactively; `init` additionally hits limitation (2) on a genuinely fresh repository, since `migrate` always targets a repo that already has ADR files and so never triggers that particular ordering bug.
 
 ## Command reference (verified against the actual `Arguments` definitions — do not invent flags not listed here)
 

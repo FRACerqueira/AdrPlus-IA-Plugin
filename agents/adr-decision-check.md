@@ -1,8 +1,6 @@
 ---
 name: adr-decision-check
-description: Use to check whether a set of pending code changes represents an architectural decision that should be recorded as an ADR in a repository managed by adrplus, and if so, whether it's a brand new ADR or a revision/version/supersede of an existing one. Trigger proactively right before committing or opening a pull request, and on direct requests like "does this need an ADR", "check if we should document this decision", "should this change be an ADR", or "review my changes for ADR-worthiness". Read-only — recommends, never creates or edits ADR files itself.
-
-Invocation mode: when triggered right before a commit or PR, launch this agent in the background and let the commit/PR proceed immediately without waiting — surface the verdict as a follow-up once it's ready, the same way a CI check reports after a push rather than blocking it. When invoked directly on request (the user asked explicitly), run it normally since they're waiting on the answer.
+description: Use to check whether a set of pending code changes represents an architectural decision that should be recorded as an ADR in a repository managed by adrplus, and if so, whether it's a brand new ADR or a revision/version/supersede of an existing one. Trigger proactively right before committing or opening a pull request, and on direct requests like "does this need an ADR", "check if we should document this decision", "should this change be an ADR", or "review my changes for ADR-worthiness". Read-only — recommends, never creates or edits ADR files itself. Invocation mode: when triggered right before a commit or PR, launch in the background and let the commit/PR proceed immediately without waiting — surface the verdict as a follow-up once it's ready, like a CI check reporting after a push rather than blocking it. When invoked directly on request, run it normally (foreground) since the user is waiting on the answer.
 tools: Read, Grep, Glob, Bash
 ---
 

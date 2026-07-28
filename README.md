@@ -23,7 +23,9 @@ dotnet tool install -g adrplus
 adrplus --version
 ```
 
-**Requires `adrplus` v1.0.0-beta1 or later (any 1.x release, including pre-releases).** Earlier versions unconditionally draw a startup banner and can fall into an interactive first-run wizard on every command — both crash or hang when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). v1.0.0-beta1 is the first release safe for this plugin. CI always installs the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
+**Requires `adrplus` v1.0.0-beta1 or later (any 1.x release, including pre-releases).** Earlier versions unconditionally draw a startup banner and can fall into an interactive first-run wizard on every command — both crash or hang when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). v1.0.0-beta1 is the first release that fixed *those* crashes. CI always installs the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
+
+**Known limitation as of v1.0.0-beta2: `init` cannot complete non-interactively on a genuinely fresh repository, or on a machine/version where `adrplus` has never been run interactively even once.** Two separate confirmed bugs in the CLI, not gaps in this plugin's instructions — see `skills/manage-adrs/SKILL.md`'s Prerequisite section for details. This note will be removed once a release fixes both.
 
 ## Install
 
