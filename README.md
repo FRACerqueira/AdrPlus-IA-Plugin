@@ -23,6 +23,12 @@ dotnet tool install -g adrplus
 adrplus --version
 ```
 
+Already have it installed? Update to the latest release the same way you'd update any .NET global tool:
+```bash
+dotnet tool update -g adrplus
+adrplus --version
+```
+
 **Requires `adrplus` v1.0.0-beta3 or later (any 1.x release, including pre-releases).** Versions before beta1 unconditionally drew a startup banner and could fall into an interactive first-run wizard on every command — both crashed or hung when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a machine/version where `adrplus` had never been run interactively — beta3 removed that dependency entirely. CI always installs the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
 
 **`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later, not yet published to NuGet as of this writing** (latest published release is beta5) — AdrPlus's own plugin system (unrelated to this Claude Code plugin). The skill checks for these commands before using them and won't invent them on an older install.
@@ -51,6 +57,16 @@ Once installed, Claude will need permission to run `adrplus` via Bash. If you do
 ```
 (A plugin cannot grant this for you — see the [plugin permissions docs](https://code.claude.com/docs/en/plugins-reference.md).)
 
+## Update
+
+Third-party marketplaces don't auto-update by default. After a new version is pushed to this repo, refresh the catalog with:
+```
+/plugin marketplace update adrplus-tools
+```
+(`adrplus-tools` is the marketplace name from `marketplace.json`, not the GitHub repo name.) Then open `/plugin`, find `adrplus`, and update/reinstall it from there so your installed copy actually moves to the newer version — a marketplace refresh alone doesn't confirm it updates an already-installed plugin.
+
+Prefer not to do this manually every time? Run `/plugin`, go to the **Marketplaces** tab, select `adrplus-tools`, and enable auto-update — Claude Code will then refresh the catalog and update installed plugins from it in the background on startup.
+
 ## Versioning
 
-`plugin.json` and `marketplace.json` are kept in sync — bump both together on every meaningful change. Claude Code only picks up updates when the version changes (or, if you drop the `version` field, on every new commit).
+`plugin.json`'s `version` and the matching plugin entry's `version` in `marketplace.json` must be bumped together on every meaningful change — Claude Code only picks up an update when that version string changes (or, if you drop the `version` field, on every new commit). Forgetting one of the two files leaves them out of sync and `/plugin marketplace update` won't see a new release.
