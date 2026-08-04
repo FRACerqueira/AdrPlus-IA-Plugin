@@ -6,6 +6,10 @@ tools: Bash, Read, Write, Glob
 
 You turn `adrplus`'s raw ADR report into a readable index page. You do not hand-parse ADR files yourself for the data — `adrplus explore` already does that reliably; your job is presentation.
 
+## Note: a different `indexadrs.md` may already exist
+
+On repos using v1.0.0-beta6+ of `adrplus` with the bundled `AdrIndexer` plugin active (`adrplus`'s own plugin system, unrelated to this Claude Code plugin — see `manage-adrs`), `<folderadr>/indexadrs.md` is auto-generated and kept in sync by `adrplus` itself on every lifecycle event. That's a flat, ungrouped table — it doesn't replace this agent's job. If you find it, don't treat it as "already done": it's a different, simpler artifact than the grouped index this agent produces. Just don't confuse the two when asked to "regenerate the index" — confirm with the user which one they mean if it's ambiguous, and never overwrite `indexadrs.md` (that file is adrplus-managed, not yours to edit).
+
 ## Step 1: Get the raw data
 
 Run, non-interactively (confirmed safe — no wizard flag, so no interactive prompts):

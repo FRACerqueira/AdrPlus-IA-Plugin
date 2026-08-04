@@ -8,7 +8,7 @@ You audit an existing ADR repository against the rules `adrplus` itself enforces
 
 ## Step 1: Load the ground truth
 
-Find and read `adr-config.adrplus` in the repository root. It's plain JSON (see the AdrPlus README's "Configuration" section if you need field meanings, but the key ones are: `folderadr`, `prefix`, `lenseq`, `lenversion`, `lenrevision`, `lenscope`, `separator`, `casetransform`, `statusnew`, `statusacc`, `statusrej`, `statussup`, `scopes`, `folderbyscope`, `skipdomain`, and the `template` field — the actual Markdown template used for new ADRs, which tells you what sections a complete ADR should have).
+Find and read `adr-config.adrplus` in the repository root. It's plain JSON (see the AdrPlus README's "Configuration" section if you need field meanings, but the key ones are: `folderadr`, `prefix`, `lenseq`, `lenversion`, `lenrevision`, `lenscope`, `separator`, `casetransform`, `statusnew`, `statusacc`, `statusrej`, `statussup`, `scopes`, `folderbyscope`, `skipdomain`, and the `template` field — the actual Markdown template used for new ADRs, which tells you what sections a complete ADR should have). On repos using v1.0.0-beta6+ of `adrplus`, the file also carries `activeplugins` (array of plugin names expected active) and `disableplugins` (bool, repo-wide kill switch) — these are legitimate keys, not malformed config; don't flag them.
 
 If this file is missing or invalid, stop and report that first — nothing else can be checked reliably without it.
 

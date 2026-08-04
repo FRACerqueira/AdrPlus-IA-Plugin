@@ -10,7 +10,7 @@ Lets Claude Code manage [Architecture Decision Records](https://adr.github.io/) 
 
 ## What's included
 
-- **Skill `manage-adrs`** — teaches Claude the `adrplus` command surface (new, approve, reject, version, revise, supersede, undo, init, migrate, config, explore) so it can drive the CLI directly instead of guessing at flags.
+- **Skill `manage-adrs`** — teaches Claude the `adrplus` command surface (new, approve, reject, version, revise, supersede, undo, init, migrate, config, explore, and — on v1.0.0-beta6+ — plugins, sync) so it can drive the CLI directly instead of guessing at flags.
 - **Agent `adr-auditor`** — audits an existing ADR repository: structural compliance with `adr-config.adrplus`, content completeness, supersede-chain integrity, and status hygiene. Read-only, produces a report.
 - **Agent `adr-indexer`** — generates a readable, grouped index page of all ADRs from `adrplus explore`'s report data.
 - **Agent `adr-decision-check`** — checks pending changes (before a commit or PR, or on request) for whether they're architecturally significant enough to need an ADR, and if so whether it's a new ADR or a version/revise/supersede of an existing one. Read-only, recommends — never creates or edits ADRs itself.
@@ -23,9 +23,9 @@ dotnet tool install -g adrplus
 adrplus --version
 ```
 
-**Requires `adrplus` v1.0.0-beta1 or later (any 1.x release, including pre-releases).** Earlier versions unconditionally draw a startup banner and can fall into an interactive first-run wizard on every command — both crash or hang when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). v1.0.0-beta1 is the first release that fixed *those* crashes. CI always installs the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
+**Requires `adrplus` v1.0.0-beta3 or later (any 1.x release, including pre-releases).** Versions before beta1 unconditionally drew a startup banner and could fall into an interactive first-run wizard on every command — both crashed or hung when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a machine/version where `adrplus` had never been run interactively — beta3 removed that dependency entirely. CI always installs the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
 
-**Known limitation as of v1.0.0-beta2: `init` cannot complete non-interactively on a genuinely fresh repository, or on a machine/version where `adrplus` has never been run interactively even once.** Two separate confirmed bugs in the CLI, not gaps in this plugin's instructions — see `skills/manage-adrs/SKILL.md`'s Prerequisite section for details. This note will be removed once a release fixes both.
+**`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later, not yet published to NuGet as of this writing** (latest published release is beta5) — AdrPlus's own plugin system (unrelated to this Claude Code plugin). The skill checks for these commands before using them and won't invent them on an older install.
 
 ## Install
 

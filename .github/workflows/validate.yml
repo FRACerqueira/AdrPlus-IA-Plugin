@@ -15,14 +15,14 @@ jobs:
       - run: python scripts/validate_plugin.py
 
   # Always resolves to the highest 1.x adrplus release, including pre-releases
-  # (see README.md "Prerequisite" for the minimum: 1.0.0-beta1). This job is
+  # (see README.md "Prerequisite" for the minimum: 1.0.0-beta3). This job is
   # what catches drift between SKILL.md's documented flags and the CLI's real
   # --help output as new 1.x releases ship - bump the range's floor here (and
   # re-verify skill/agents) only if the minimum supported version changes.
   adrplus-compat:
     runs-on: ubuntu-latest
     env:
-      ADRPLUS_VERSION: "[1.0.0-beta1,2.0.0)"
+      ADRPLUS_VERSION: "[1.0.0-beta3,2.0.0)"
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
