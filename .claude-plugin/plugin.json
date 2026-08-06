@@ -2,7 +2,7 @@
   "name": "adrplus",
   "displayName": "AdrPlus",
   "description": "Manage Architecture Decision Records via the adrplus CLI - create, review, approve, audit and index ADRs without memorizing commands.",
-  "version": "0.6.0",
+  "version": "0.7.0",
   "author": {
     "name": "Fernando Cerqueira"
   },

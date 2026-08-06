@@ -3,7 +3,7 @@
 Versions refer to `.claude-plugin/plugin.json` / `marketplace.json` (the Claude Code plugin only —
 `copilot/` has no version of its own, see [README.md](README.md#versioning)).
 
-## Unreleased
+## 0.7.0 — 2026-08-06
 
 - Added `HOWTO.md` / `HOWTO-CLAUDE-CODE.md` / `HOWTO-COPILOT.md` — end-user walkthroughs with a single
   running example, separate from the reference-style README.
@@ -18,6 +18,8 @@ Versions refer to `.claude-plugin/plugin.json` / `marketplace.json` (the Claude 
   other. Also fixed a regex that silently skipped the `plugins`/`sync` rows entirely (their
   `(v1.0.0-beta6+)` suffix broke the match) — both commands are now actually verified against
   `adrplus help`.
+- Added `CHANGELOG.md`, a "last synced" marker in each `copilot/` file, an anchor-link validator in
+  `scripts/validate_plugin.py`, and rounded out `.gitignore`.
 
 ## 0.6.0 — 2026-08-06
 
