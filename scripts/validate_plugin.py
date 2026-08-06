@@ -2,6 +2,7 @@
 """Validate the plugin manifests and skill/agent frontmatter without external dependencies."""
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -41,6 +42,31 @@ def parse_frontmatter(path):
     return fields
 
 
+def github_slug(heading):
+    slug = heading.strip().lower()
+    slug = re.sub(r"[^\w\s-]", "", slug)
+    slug = re.sub(r"\s+", "-", slug)
+    return slug
+
+
+def check_readme_anchor_links():
+    readme = ROOT / "README.md"
+    if not readme.exists():
+        return
+    headings = re.findall(r"^#{1,6}\s+(.+)$", readme.read_text(encoding="utf-8"), re.MULTILINE)
+    valid_slugs = {github_slug(h) for h in headings}
+
+    for md in sorted(ROOT.glob("*.md")):
+        if md.name == "README.md":
+            continue
+        text = md.read_text(encoding="utf-8")
+        for anchor in re.findall(r"\]\(README\.md#([a-z0-9-]+)\)", text):
+            check(
+                anchor in valid_slugs,
+                f"{md.relative_to(ROOT)}: links to README.md#{anchor}, but no README.md heading produces that anchor",
+            )
+
+
 def main():
     plugin = load_json(ROOT / ".claude-plugin" / "plugin.json")
     marketplace = load_json(ROOT / ".claude-plugin" / "marketplace.json")
@@ -61,6 +87,8 @@ def main():
                 )
 
     check((ROOT / "LICENSE").exists(), "missing LICENSE file")
+
+    check_readme_anchor_links()
 
     for skill_md in sorted((ROOT / "skills").glob("*/SKILL.md")):
         fm = parse_frontmatter(skill_md)

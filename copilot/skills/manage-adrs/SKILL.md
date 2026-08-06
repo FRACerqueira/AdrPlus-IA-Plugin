@@ -5,10 +5,9 @@ allowed-tools: Bash Read Write Glob
 compatibility: Requires the adrplus CLI installed as a .NET global tool (dotnet tool install -g adrplus).
 metadata:
   ported-from: skills/manage-adrs/SKILL.md (Claude Code plugin, canonical source)
-  tool-mapping-status: allowed-tools vocabulary (Bash/Read/Write/Glob) is shared with Claude Code per the Agent Skills spec — validated. Syntax changed from comma- to space-separated per spec.
 ---
 
-> Ported from this repo's Claude Code skill (`skills/manage-adrs/SKILL.md`). Content is functionally identical — only `allowed-tools` syntax and a couple of tool-name references below were adapted for the GitHub Copilot / Agent Skills open standard (agentskills.io/specification). There is no generator yet: if the canonical Claude version changes, re-sync this file by hand.
+> Ported from this repo's Claude Code skill (`skills/manage-adrs/SKILL.md`). Content is functionally identical — only `allowed-tools` syntax and a couple of tool-name references below were adapted for the GitHub Copilot / Agent Skills open standard (agentskills.io/specification). There is no generator yet: if the canonical Claude version changes, re-sync this file by hand. **Last synced: 2026-08-06.**
 
 # Managing ADRs with adrplus
 
@@ -16,7 +15,7 @@ metadata:
 
 ## Critical rule: never use `--wizard`/`-w`
 
-`adrplus`'s wizard mode is an interactive terminal UI (arrow-key menus, live text prompts) built for a human sitting at a real terminal. You cannot drive it through a non-interactive shell/terminal tool (`Bash` in Claude Code, `runCommands` in GitHub Copilot — **a validar**, see `copilot/agents/*.agent.md` for the same caveat) — it will hang waiting for keystrokes it will never receive. **Always use the direct, non-interactive flags documented below instead.** If a user explicitly asks to run the wizard themselves, tell them to run the command in their own terminal — don't attempt it yourself.
+`adrplus`'s wizard mode is an interactive terminal UI (arrow-key menus, live text prompts) built for a human sitting at a real terminal. You cannot drive it through a non-interactive shell/terminal tool (`Bash` in Claude Code, `runCommands` in GitHub Copilot) — it will hang waiting for keystrokes it will never receive. **Always use the direct, non-interactive flags documented below instead.** If a user explicitly asks to run the wizard themselves, tell them to run the command in their own terminal — don't attempt it yourself.
 
 ## Prerequisite
 
@@ -28,7 +27,7 @@ If this fails, tell the user to run `dotnet tool install -g adrplus` (requires .
 
 **Requires v1.0.0-beta3 or later (any 1.x release, including pre-releases).** Versions before beta1 drew a startup banner and could fall into an interactive first-run wizard on every command, unconditionally — both crashed or hung when an agent runs them non-interactively via a shell/terminal tool, even with all the right non-interactive flags. beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a fresh `adrplus` install (a machine-global template dependency that only the interactive first-run wizard ever satisfied); beta3 removed that dependency from every repo-touching command. If a command you run this way fails with `"The handle is invalid"` or similar console errors instead of a normal error message, tell the user their `adrplus` is too old and needs upgrading (see the update command above).
 
-**`plugins` and `sync` (below) need v1.0.0-beta6 or later — not yet published to NuGet as of this writing (latest published release is beta5).** Check with `adrplus help` first: if `plugins`/`sync` aren't listed in its output, the installed version predates the plugin system — don't invent flags or attempt an alternate route around a missing command.
+**`plugins` and `sync` (below) need v1.0.0-beta6 or later — published to NuGet since beta6 (latest published release as of this writing is beta9).** Check with `adrplus help` first: if `plugins`/`sync` aren't listed in its output, the installed version predates the plugin system — don't invent flags or attempt an alternate route around a missing command.
 
 ## Two config files, one hard rule
 
@@ -95,4 +94,4 @@ If a user's request doesn't map cleanly onto one of the rows above, run `adrplus
 
 ## Before committing or opening a PR
 
-When you're about to run `git commit` or open a pull request on the user's behalf, launch the `adr-decision-check` agent first. **A validar:** the Claude Code version launches this in the background (non-blocking) and reports the verdict as a follow-up once ready, so it never delays the commit/PR. Whether GitHub Copilot's custom-agent/subagent mechanism supports the same non-blocking invocation (vs. waiting on the result) hasn't been confirmed — if background invocation isn't available, run it in the foreground but keep it advisory: never hold up or refuse a commit because of its recommendation.
+When you're about to run `git commit` or open a pull request on the user's behalf, launch the `adr-decision-check` agent first. The Claude Code version launches this in the background (non-blocking) and reports the verdict as a follow-up once ready, so it never delays the commit/PR; do the same on Copilot if your surface supports non-blocking subagent invocation. If it doesn't, run it in the foreground instead, but keep it advisory either way: never hold up or refuse a commit because of its recommendation.

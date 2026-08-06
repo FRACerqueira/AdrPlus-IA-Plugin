@@ -1,27 +1,10 @@
 ---
 name: adr-indexer
 description: Use to generate a readable, navigable index page of all Architecture Decision Records (ADRs) in a repository managed by adrplus — grouped by status and scope, with links, instead of a flat data table. Trigger on requests like "create an ADR index", "generate an overview of our ADRs", or "make a decisions log page".
-tools: ["codebase", "editFiles", "runCommands", "search"]  # mapped from Claude Code tools "Bash, Read, Write, Glob" — tool/toolset names confirmed to exist, exact list syntax still "a validar", see "Tool mapping (a validar)" below
+tools: ["codebase", "editFiles", "runCommands", "search"]  # mapped from Claude Code tools "Bash, Read, Write, Glob" (this agent writes the generated index file, unlike adr-auditor)
 ---
 
-> Ported from this repo's Claude Code agent (`agents/adr-indexer.md`). Body instructions are unchanged from the canonical source except where noted below. There is no generator yet: if the canonical Claude version changes, re-sync this file by hand.
-
-## Tool mapping (a validar)
-
-The Claude Code version uses `Bash, Read, Write, Glob` (this agent writes the generated index file, unlike `adr-auditor`). The `tools` list above translates that to GitHub Copilot's vocabulary; confidence has improved since this was first written, but two specific points are still unverified:
-
-| Claude Code | Copilot | Status |
-|---|---|---|
-| `Bash` (runs `adrplus explore`) | `runCommands` | **Confirmed to exist** — not in the Copilot Chat extension's own `package.json` (it's a VS Code-core toolset for terminal execution), but shown as a valid `tools:` value in two independent official VS Code docs examples. |
-| `Read` | `codebase` | **Confirmed to exist** — real `toolReferenceName` in `microsoft/vscode-copilot-chat`'s `package.json`, also shown in official VS Code custom-agent doc examples. |
-| `Write` | `editFiles` | **Confirmed to exist** — real toolset (`createFile`, `applyPatch`, `replaceString`, etc.) in the same `package.json`. |
-| `Glob` | `search` (toolset containing `fileSearch`, `usages`, `searchResults`, `textSearch`, `codebase`, `changes`, `listDirectory`) | **Confirmed to exist** as a toolset, same sources as above. |
-
-**Still "a validar":**
-1. **List syntax** — official docs show two forms in different examples: flat (`tools: ['codebase', 'editFiles']`) and namespaced (`tools: ['search/fileSearch', 'edit/editFiles']`). This file uses the flat form; if Copilot rejects it, try the namespaced form instead.
-2. **GitHub cloud coding agent parity** — everything above was verified for VS Code's local Copilot Chat. Whether the GitHub-hosted cloud coding agent (`target: github-copilot`) exposes the identical tool vocabulary is unconfirmed.
-
-If any of these tool identifiers are rejected or unavailable when this agent file is loaded, check the current built-in tool names for your Copilot surface and update this list.
+> Ported from this repo's Claude Code agent (`agents/adr-indexer.md`). Body instructions are unchanged from the canonical source except where noted below. There is no generator yet: if the canonical Claude version changes, re-sync this file by hand. **Last synced: 2026-08-06.**
 
 You turn `adrplus`'s raw ADR report into a readable index page. You do not hand-parse ADR files yourself for the data — `adrplus explore` already does that reliably; your job is presentation.
 
@@ -41,13 +24,31 @@ Read that file.
 
 ## Step 2: Reorganize, don't just reformat
 
-Don't simply copy the flat table into the output. Build a structure a human would actually want to scan:
+Don't simply copy the flat table into the output — **this applies even when there's only one ADR**; don't take a "not worth restructuring" shortcut just because the table is small. If your output is structurally the same table `adrplus explore` produced (same columns, same row order, no status headings, no links), you have skipped this step and must redo it.
+
+Build a structure a human would actually want to scan:
 
 - **Group by current status** first (e.g. Accepted, Proposed, Rejected, Superseded — use the repo's actual configured status labels from `adr-config.adrplus`, not hardcoded English words).
 - Within each status group, if the repo uses scopes (`lenscope > 0` in `adr-config.adrplus`), sub-group by scope.
 - For each ADR, show: a link to the file (relative Markdown link, e.g. `[Use PostgreSQL as Primary Database](doc/adr/ADR0001V01-UsePostgresql.md)`), its version/revision, and its created/last-changed date.
 - Superseded ADRs should note what replaced them (cross-reference by the `--NNNN` filename suffix convention `adrplus supersede` uses) and link forward to the successor.
 - Add a one-line summary count at the top (e.g. "12 ADRs — 8 Accepted, 2 Proposed, 1 Rejected, 1 Superseded").
+
+**Example**, turning one raw `adrplus explore` row:
+```
+|File|Current Status|Folder|Format|Prefix|Version|Revision|Status created|Status updated|Scope|Domain|
+|ADR0001V01-UsePostgresql.md|2026-08-06:Accepted|doc/adr|AdrPlus Format|ADR|1|0|2026-08-06|2026-08-06||Backend|
+```
+into this:
+```
+# ADR Index
+
+1 ADR — 1 Accepted
+
+## Accepted
+- [Use PostgreSQL as Primary Database](doc/adr/ADR0001V01-UsePostgresql.md) — v1, created 2026-08-06
+```
+Not a table with the same columns relabeled — a grouped list with links, even for a single entry.
 
 ## Step 3: Write the output
 

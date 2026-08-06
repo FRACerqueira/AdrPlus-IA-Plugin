@@ -22,13 +22,31 @@ Read that file.
 
 ## Step 2: Reorganize, don't just reformat
 
-Don't simply copy the flat table into the output. Build a structure a human would actually want to scan:
+Don't simply copy the flat table into the output — **this applies even when there's only one ADR**; don't take a "not worth restructuring" shortcut just because the table is small. If your output is structurally the same table `adrplus explore` produced (same columns, same row order, no status headings, no links), you have skipped this step and must redo it.
+
+Build a structure a human would actually want to scan:
 
 - **Group by current status** first (e.g. Accepted, Proposed, Rejected, Superseded — use the repo's actual configured status labels from `adr-config.adrplus`, not hardcoded English words).
 - Within each status group, if the repo uses scopes (`lenscope > 0` in `adr-config.adrplus`), sub-group by scope.
 - For each ADR, show: a link to the file (relative Markdown link, e.g. `[Use PostgreSQL as Primary Database](doc/adr/ADR0001V01-UsePostgresql.md)`), its version/revision, and its created/last-changed date.
 - Superseded ADRs should note what replaced them (cross-reference by the `--NNNN` filename suffix convention `adrplus supersede` uses) and link forward to the successor.
 - Add a one-line summary count at the top (e.g. "12 ADRs — 8 Accepted, 2 Proposed, 1 Rejected, 1 Superseded").
+
+**Example**, turning one raw `adrplus explore` row:
+```
+|File|Current Status|Folder|Format|Prefix|Version|Revision|Status created|Status updated|Scope|Domain|
+|ADR0001V01-UsePostgresql.md|2026-08-06:Accepted|doc/adr|AdrPlus Format|ADR|1|0|2026-08-06|2026-08-06||Backend|
+```
+into this:
+```
+# ADR Index
+
+1 ADR — 1 Accepted
+
+## Accepted
+- [Use PostgreSQL as Primary Database](doc/adr/ADR0001V01-UsePostgresql.md) — v1, created 2026-08-06
+```
+Not a table with the same columns relabeled — a grouped list with links, even for a single entry.
 
 ## Step 3: Write the output
 

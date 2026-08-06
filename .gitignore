@@ -1,4 +1,7 @@
 .vs/
+.vscode/
 graphify-out/
 .claude/settings.local.json
 __pycache__/
+.DS_Store
+Thumbs.db

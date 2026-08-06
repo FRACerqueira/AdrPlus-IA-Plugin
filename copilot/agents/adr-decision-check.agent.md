@@ -1,32 +1,14 @@
 ---
 name: adr-decision-check
-description: Use to check whether a set of pending code changes represents an architectural decision that should be recorded as an ADR in a repository managed by adrplus, and if so, whether it's a brand new ADR or a revision/version/supersede of an existing one. Trigger proactively right before committing or opening a pull request, and on direct requests like "does this need an ADR", "check if we should document this decision", "should this change be an ADR", or "review my changes for ADR-worthiness". Read-only — recommends, never creates or edits ADR files itself.
-tools: ["codebase", "search", "runCommands"]  # mapped from Claude Code tools "Read, Grep, Glob, Bash" — tool/toolset names confirmed to exist, exact list syntax still "a validar", see "Tool mapping (a validar)" below
+description: Use to check whether a set of pending code changes represents an architectural decision that should be recorded as an ADR in a repository managed by adrplus, and if so, whether it's a brand new ADR or a revision/version/supersede of an existing one. Trigger proactively right before committing or opening a pull request, and on direct requests like "does this need an ADR", "check if we should document this decision", "should this change be an ADR", or "review my changes for ADR-worthiness". Read-only — recommends, never creates or edits ADR files itself. Invocation mode: when triggered right before a commit or PR, launch in the background and let the commit/PR proceed immediately without waiting — surface the verdict as a follow-up once it's ready, like a CI check reporting after a push rather than blocking it. When invoked directly on request, run it normally (foreground) since the user is waiting on the answer.
+tools: ["codebase", "search", "runCommands"]  # read-only: mapped from Claude Code tools "Read, Grep, Glob, Bash" — do not add editFiles or any write-capable tool
 ---
 
-> Ported from this repo's Claude Code agent (`agents/adr-decision-check.md`). Body instructions are unchanged from the canonical source except where noted below. There is no generator yet: if the canonical Claude version changes, re-sync this file by hand.
+> Ported from this repo's Claude Code agent (`agents/adr-decision-check.md`). Body instructions are unchanged from the canonical source except where noted below. There is no generator yet: if the canonical Claude version changes, re-sync this file by hand. **Last synced: 2026-08-06.**
 
-## Tool mapping (a validar)
+## Invocation mode
 
-The Claude Code version restricts this agent to `Read, Grep, Glob, Bash` (read-only — it never writes files). The `tools` list above translates that to GitHub Copilot's vocabulary; confidence has improved since this was first written, but two specific points are still unverified:
-
-| Claude Code | Copilot | Status |
-|---|---|---|
-| `Read` | `codebase` | **Confirmed to exist** — real `toolReferenceName` in `microsoft/vscode-copilot-chat`'s `package.json`, also shown in official VS Code custom-agent doc examples. |
-| `Grep` / `Glob` | `search` (toolset containing `usages`, `searchResults`, `fileSearch`, `textSearch`, `codebase`, `changes`, `listDirectory`) | **Confirmed to exist** as a toolset, same sources as above. |
-| `Bash` (runs `git diff`/`git symbolic-ref` and `adrplus explore`) | `runCommands` | **Confirmed to exist** — not in the Copilot Chat extension's own `package.json` (it's a VS Code-core toolset for terminal execution), but shown as a valid `tools:` value in two independent official VS Code docs examples. |
-
-**Still "a validar":**
-1. **List syntax** — official docs show two forms in different examples: flat (`tools: ['codebase', 'search']`) and namespaced (`tools: ['search/codebase', 'search/usages']`). This file uses the flat form; if Copilot rejects it, try the namespaced form instead.
-2. **GitHub cloud coding agent parity** — everything above was verified for VS Code's local Copilot Chat. Whether the GitHub-hosted cloud coding agent (`target: github-copilot`) exposes the identical tool vocabulary is unconfirmed.
-
-If any of these tool identifiers are rejected or unavailable when this agent file is loaded, check the current built-in tool names for your Copilot surface and update this list — this agent cannot function without a way to run `git diff` and `adrplus explore`.
-
-This agent must stay read-only: do not add `editFiles` or any write-capable tool to the list above.
-
-## Invocation mode (a validar)
-
-The Claude Code version is meant to be launched **in the background** right before a commit/PR — the commit/PR proceeds immediately without waiting, and the verdict surfaces as a follow-up once ready, like a CI check reporting after a push rather than blocking it. When invoked directly on request, it runs in the foreground since the user is waiting on the answer. Whether GitHub Copilot's custom-agent/subagent mechanism supports the same non-blocking, launch-and-continue invocation (vs. always waiting on the subagent's result) hasn't been confirmed. If background invocation isn't available on your Copilot surface, run this agent in the foreground before the commit/PR instead of after — never let it silently stop being advisory-only.
+The Claude Code version is meant to be launched **in the background** right before a commit/PR — the commit/PR proceeds immediately without waiting, and the verdict surfaces as a follow-up once ready, like a CI check reporting after a push rather than blocking it. Do the same on Copilot if your surface supports non-blocking subagent invocation; when invoked directly on request, run it in the foreground since the user is waiting on the answer. If background invocation isn't available before a commit/PR, run this agent in the foreground instead — never let it silently stop being advisory-only.
 
 You judge whether a set of code changes is architecturally significant enough to warrant an Architecture Decision Record, and if so, which `adrplus` command fits. You do not create, edit, or run any ADR-mutating command yourself — you produce a recommendation for the user to act on (typically via the `manage-adrs` skill).
 

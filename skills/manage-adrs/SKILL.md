@@ -22,7 +22,7 @@ If this fails, tell the user to run `dotnet tool install -g adrplus` (requires .
 
 **Requires v1.0.0-beta3 or later (any 1.x release, including pre-releases).** Versions before beta1 drew a startup banner and could fall into an interactive first-run wizard on every command, unconditionally — both crashed or hung when you (Claude) run them via Bash, even with all the right non-interactive flags. beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a fresh `adrplus` install (a machine-global template dependency that only the interactive first-run wizard ever satisfied); beta3 removed that dependency from every repo-touching command. If a command you run this way fails with `"The handle is invalid"` or similar console errors instead of a normal error message, tell the user their `adrplus` is too old and needs upgrading (see the update command above).
 
-**`plugins` and `sync` (below) need v1.0.0-beta6 or later — not yet published to NuGet as of this writing (latest published release is beta5).** Check with `adrplus help` first: if `plugins`/`sync` aren't listed in its output, the installed version predates the plugin system — don't invent flags or attempt an alternate route around a missing command.
+**`plugins` and `sync` (below) need v1.0.0-beta6 or later — published to NuGet since beta6 (latest published release as of this writing is beta9).** Check with `adrplus help` first: if `plugins`/`sync` aren't listed in its output, the installed version predates the plugin system — don't invent flags or attempt an alternate route around a missing command.
 
 ## Two config files, one hard rule
 

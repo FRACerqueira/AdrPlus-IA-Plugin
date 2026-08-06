@@ -5,6 +5,8 @@ Lets AI coding assistants manage [Architecture Decision Records](https://adr.git
 - **[Claude Code](#claude-code)** — a full plugin (1 skill, 3 agents), distributed through Claude Code's plugin marketplace.
 - **[GitHub Copilot](#github-copilot)** — the same skill and agents, adapted to Copilot's Agent Skills / custom-agent format under `copilot/` (copied manually into your repo — no marketplace exists for Copilot).
 
+Already installed and just want to know what to actually type? See **[HOWTO.md](HOWTO.md)**.
+
 ## Key concepts
 
 - **Architecture Decision Records (ADR)** — the plain-Markdown files this repo's tooling manages. Every command in `manage-adrs`, and every check `adr-auditor` runs, operates on ADRs as defined by `adrplus`'s own naming and header conventions (see `adr-config.adrplus`).
@@ -39,7 +41,7 @@ adrplus --version
 
 **Requires `adrplus` v1.0.0-beta3 or later (any 1.x release, including pre-releases).** Versions before beta1 unconditionally drew a startup banner and could fall into an interactive first-run wizard on every command — both crashed or hung when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a machine/version where `adrplus` had never been run interactively — beta3 removed that dependency entirely. CI always installs the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
 
-**`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later, not yet published to NuGet as of this writing** (latest published release is beta5) — AdrPlus's own plugin system (unrelated to this Claude Code plugin). The skill checks for these commands before using them and won't invent them on an older install.
+**`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later** — published to NuGet since beta6 (latest published release as of this writing is beta9) — AdrPlus's own plugin system (unrelated to this Claude Code plugin). The skill checks for these commands before using them and won't invent them on an older install.
 
 ### Install
 
@@ -96,12 +98,12 @@ cp copilot/agents/*.agent.md your-repo/.github/agents/
 ```
 (or use `.claude/skills`, `.agents/skills`, or `~/.copilot/skills` for personal, cross-repo use — see [GitHub's agent skills docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) for the full discovery rules.)
 
-**Tool mapping — partially validated.** Claude Code's tool names (`Bash`, `Read`, `Write`, `Glob`) don't map 1:1 to Copilot's (`runCommands`, `codebase`, `editFiles`, `search`, ...). Cross-checking `microsoft/vscode-copilot-chat`'s own `package.json` against the official VS Code custom-agent docs confirms all of `codebase`, `search`, `editFiles`, and `runCommands` exist as real tool/toolset names — but two things remain unverified and are marked "a validar" in each `copilot/agents/*.agent.md`: (1) whether the `tools:` list should use flat names or the `toolset/member` namespaced form (official docs show both), and (2) whether the GitHub-hosted cloud coding agent exposes the same tool vocabulary as VS Code's local Copilot Chat. `adr-decision-check.agent.md` also flags its background-invocation behavior as unconfirmed on Copilot.
+Claude Code's tool names (`Bash`, `Read`, `Write`, `Glob`) don't map 1:1 to Copilot's (`runCommands`, `codebase`, `editFiles`, `search`, ...) — each `copilot/agents/*.agent.md` file's `tools:` frontmatter carries the translated list.
 
 `copilot/` is not generated from `skills/`/`agents/` — there's no sync tooling yet. If you change the canonical Claude files, update `copilot/` by hand to keep them consistent.
 
 ## Versioning
 
-Applies to the Claude Code plugin only — `copilot/` has no version/update mechanism of its own (see [GitHub Copilot](#github-copilot)).
+Applies to the Claude Code plugin only — `copilot/` has no version/update mechanism of its own (see [GitHub Copilot](#github-copilot)). See [CHANGELOG.md](CHANGELOG.md) for what changed in each version.
 
 `plugin.json`'s `version` and the matching plugin entry's `version` in `marketplace.json` must be bumped together on every meaningful change — Claude Code only picks up an update when that version string changes (or, if you drop the `version` field, on every new commit). Forgetting one of the two files leaves them out of sync and `/plugin marketplace update` won't see a new release.
