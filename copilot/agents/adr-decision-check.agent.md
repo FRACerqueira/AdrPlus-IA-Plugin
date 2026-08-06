@@ -1,23 +1,26 @@
 ---
 name: adr-decision-check
 description: Use to check whether a set of pending code changes represents an architectural decision that should be recorded as an ADR in a repository managed by adrplus, and if so, whether it's a brand new ADR or a revision/version/supersede of an existing one. Trigger proactively right before committing or opening a pull request, and on direct requests like "does this need an ADR", "check if we should document this decision", "should this change be an ADR", or "review my changes for ADR-worthiness". Read-only — recommends, never creates or edits ADR files itself.
-tools: ["codebase", "search", "searchResults", "usages", "runCommands"]  # mapped from Claude Code tools "Read, Grep, Glob, Bash" — NOT VALIDATED against a live Copilot session, see "Tool mapping (a validar)" below
+tools: ["codebase", "search", "runCommands"]  # mapped from Claude Code tools "Read, Grep, Glob, Bash" — tool/toolset names confirmed to exist, exact list syntax still "a validar", see "Tool mapping (a validar)" below
 ---
 
 > Ported from this repo's Claude Code agent (`agents/adr-decision-check.md`). Body instructions are unchanged from the canonical source except where noted below. There is no generator yet: if the canonical Claude version changes, re-sync this file by hand.
 
 ## Tool mapping (a validar)
 
-The Claude Code version restricts this agent to `Read, Grep, Glob, Bash` (read-only — it never writes files). The `tools` list above is a best-effort translation to GitHub Copilot's tool vocabulary, not yet confirmed empirically:
+The Claude Code version restricts this agent to `Read, Grep, Glob, Bash` (read-only — it never writes files). The `tools` list above translates that to GitHub Copilot's vocabulary; confidence has improved since this was first written, but two specific points are still unverified:
 
-| Claude Code | Copilot candidate | Confidence |
+| Claude Code | Copilot | Status |
 |---|---|---|
-| `Read` | `codebase` | unconfirmed |
-| `Grep` | `search`, `searchResults` | unconfirmed |
-| `Glob` | `search` | unconfirmed |
-| `Bash` (runs `git diff`/`git symbolic-ref` and `adrplus explore`) | `runCommands` | unconfirmed |
+| `Read` | `codebase` | **Confirmed to exist** — real `toolReferenceName` in `microsoft/vscode-copilot-chat`'s `package.json`, also shown in official VS Code custom-agent doc examples. |
+| `Grep` / `Glob` | `search` (toolset containing `usages`, `searchResults`, `fileSearch`, `textSearch`, `codebase`, `changes`, `listDirectory`) | **Confirmed to exist** as a toolset, same sources as above. |
+| `Bash` (runs `git diff`/`git symbolic-ref` and `adrplus explore`) | `runCommands` | **Confirmed to exist** — not in the Copilot Chat extension's own `package.json` (it's a VS Code-core toolset for terminal execution), but shown as a valid `tools:` value in two independent official VS Code docs examples. |
 
-If any of these tool identifiers are rejected or unavailable when this agent file is loaded, check the current built-in tool names for your Copilot surface (VS Code vs. GitHub cloud coding agent may differ) and update this list — this agent cannot function without a way to run `git diff` and `adrplus explore`.
+**Still "a validar":**
+1. **List syntax** — official docs show two forms in different examples: flat (`tools: ['codebase', 'search']`) and namespaced (`tools: ['search/codebase', 'search/usages']`). This file uses the flat form; if Copilot rejects it, try the namespaced form instead.
+2. **GitHub cloud coding agent parity** — everything above was verified for VS Code's local Copilot Chat. Whether the GitHub-hosted cloud coding agent (`target: github-copilot`) exposes the identical tool vocabulary is unconfirmed.
+
+If any of these tool identifiers are rejected or unavailable when this agent file is loaded, check the current built-in tool names for your Copilot surface and update this list — this agent cannot function without a way to run `git diff` and `adrplus explore`.
 
 This agent must stay read-only: do not add `editFiles` or any write-capable tool to the list above.
 

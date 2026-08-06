@@ -1,23 +1,27 @@
 ---
 name: adr-indexer
 description: Use to generate a readable, navigable index page of all Architecture Decision Records (ADRs) in a repository managed by adrplus — grouped by status and scope, with links, instead of a flat data table. Trigger on requests like "create an ADR index", "generate an overview of our ADRs", or "make a decisions log page".
-tools: ["codebase", "editFiles", "runCommands", "search", "searchResults"]  # mapped from Claude Code tools "Bash, Read, Write, Glob" — NOT VALIDATED against a live Copilot session, see "Tool mapping (a validar)" below
+tools: ["codebase", "editFiles", "runCommands", "search"]  # mapped from Claude Code tools "Bash, Read, Write, Glob" — tool/toolset names confirmed to exist, exact list syntax still "a validar", see "Tool mapping (a validar)" below
 ---
 
 > Ported from this repo's Claude Code agent (`agents/adr-indexer.md`). Body instructions are unchanged from the canonical source except where noted below. There is no generator yet: if the canonical Claude version changes, re-sync this file by hand.
 
 ## Tool mapping (a validar)
 
-The Claude Code version uses `Bash, Read, Write, Glob` (this agent writes the generated index file, unlike `adr-auditor`). The `tools` list above is a best-effort translation to GitHub Copilot's tool vocabulary, not yet confirmed empirically:
+The Claude Code version uses `Bash, Read, Write, Glob` (this agent writes the generated index file, unlike `adr-auditor`). The `tools` list above translates that to GitHub Copilot's vocabulary; confidence has improved since this was first written, but two specific points are still unverified:
 
-| Claude Code | Copilot candidate | Confidence |
+| Claude Code | Copilot | Status |
 |---|---|---|
-| `Bash` (runs `adrplus explore`) | `runCommands` | unconfirmed |
-| `Read` | `codebase` | unconfirmed |
-| `Write` | `editFiles` | unconfirmed |
-| `Glob` | `search`, `searchResults` | unconfirmed |
+| `Bash` (runs `adrplus explore`) | `runCommands` | **Confirmed to exist** — not in the Copilot Chat extension's own `package.json` (it's a VS Code-core toolset for terminal execution), but shown as a valid `tools:` value in two independent official VS Code docs examples. |
+| `Read` | `codebase` | **Confirmed to exist** — real `toolReferenceName` in `microsoft/vscode-copilot-chat`'s `package.json`, also shown in official VS Code custom-agent doc examples. |
+| `Write` | `editFiles` | **Confirmed to exist** — real toolset (`createFile`, `applyPatch`, `replaceString`, etc.) in the same `package.json`. |
+| `Glob` | `search` (toolset containing `fileSearch`, `usages`, `searchResults`, `textSearch`, `codebase`, `changes`, `listDirectory`) | **Confirmed to exist** as a toolset, same sources as above. |
 
-If any of these tool identifiers are rejected or unavailable when this agent file is loaded, check the current built-in tool names for your Copilot surface (VS Code vs. GitHub cloud coding agent may differ) and update this list.
+**Still "a validar":**
+1. **List syntax** — official docs show two forms in different examples: flat (`tools: ['codebase', 'editFiles']`) and namespaced (`tools: ['search/fileSearch', 'edit/editFiles']`). This file uses the flat form; if Copilot rejects it, try the namespaced form instead.
+2. **GitHub cloud coding agent parity** — everything above was verified for VS Code's local Copilot Chat. Whether the GitHub-hosted cloud coding agent (`target: github-copilot`) exposes the identical tool vocabulary is unconfirmed.
+
+If any of these tool identifiers are rejected or unavailable when this agent file is loaded, check the current built-in tool names for your Copilot surface and update this list.
 
 You turn `adrplus`'s raw ADR report into a readable index page. You do not hand-parse ADR files yourself for the data — `adrplus explore` already does that reliably; your job is presentation.
 
