@@ -1,21 +1,29 @@
-# AdrPlus Claude Code Plugin
+# AdrPlus AI Assistant Plugin
 
-Lets Claude Code manage [Architecture Decision Records](https://adr.github.io/) in your repository via the [`adrplus`](https://github.com/FRACerqueira/AdrPlus) CLI, in plain language, instead of you typing every command yourself.
+Lets AI coding assistants manage [Architecture Decision Records](https://adr.github.io/) in your repository via the [`adrplus`](https://github.com/FRACerqueira/AdrPlus) CLI, in plain language, instead of you typing every command yourself. Two integrations are maintained in this repo:
+
+- **[Claude Code](#claude-code)** — a full plugin (1 skill, 3 agents), distributed through Claude Code's plugin marketplace.
+- **[GitHub Copilot](#github-copilot)** — the same skill and agents, adapted to Copilot's Agent Skills / custom-agent format under `copilot/` (copied manually into your repo — no marketplace exists for Copilot).
 
 ## Key concepts
 
-- **Architecture Decision Records (ADR)** — the plain-Markdown files this plugin manages. Every command in `manage-adrs`, and every check `adr-auditor` runs, operates on ADRs as defined by `adrplus`'s own naming and header conventions (see `adr-config.adrplus`).
-- **Claude Code Plugin Marketplace** — the mechanism (`/plugin marketplace add`, `/plugin install`) this plugin is distributed through. See [Install](#install) below for how `marketplace.json` and `plugin.json` are wired together.
-- **Claude Code Plugin Permissions** — the Bash permission Claude needs to actually run `adrplus` on your behalf; a plugin manifest cannot grant this itself, so you configure it in your own `.claude/settings.json` (see [Install](#install)).
+- **Architecture Decision Records (ADR)** — the plain-Markdown files this repo's tooling manages. Every command in `manage-adrs`, and every check `adr-auditor` runs, operates on ADRs as defined by `adrplus`'s own naming and header conventions (see `adr-config.adrplus`).
+- **Agent Skills** — the open standard (`SKILL.md` + frontmatter) both Claude Code and GitHub Copilot consume; it's why `skills/manage-adrs` and `copilot/skills/manage-adrs` are near-identical rather than two unrelated implementations.
+- **Claude Code Plugin Marketplace** — the mechanism (`/plugin marketplace add`, `/plugin install`) the Claude Code plugin is distributed through. See [Claude Code → Install](#install) below for how `marketplace.json` and `plugin.json` are wired together.
+- **Claude Code Plugin Permissions** — the Bash permission Claude needs to actually run `adrplus` on your behalf; a plugin manifest cannot grant this itself, so you configure it in your own `.claude/settings.json` (see [Claude Code → Install](#install)).
 
 ## What's included
 
-- **Skill `manage-adrs`** — teaches Claude the `adrplus` command surface (new, approve, reject, version, revise, supersede, undo, init, migrate, config, explore, and — on v1.0.0-beta6+ — plugins, sync) so it can drive the CLI directly instead of guessing at flags.
+- **Skill `manage-adrs`** — teaches the assistant the `adrplus` command surface (new, approve, reject, version, revise, supersede, undo, init, migrate, config, explore, and — on v1.0.0-beta6+ — plugins, sync) so it can drive the CLI directly instead of guessing at flags.
 - **Agent `adr-auditor`** — audits an existing ADR repository: structural compliance with `adr-config.adrplus`, content completeness, supersede-chain integrity, and status hygiene. Read-only, produces a report.
 - **Agent `adr-indexer`** — generates a readable, grouped index page of all ADRs from `adrplus explore`'s report data.
 - **Agent `adr-decision-check`** — checks pending changes (before a commit or PR, or on request) for whether they're architecturally significant enough to need an ADR, and if so whether it's a new ADR or a version/revise/supersede of an existing one. Read-only, recommends — never creates or edits ADRs itself.
 
-## Prerequisite
+The canonical source for all four lives under `skills/` and `agents/` (Claude Code format, described below). `copilot/` mirrors the same four, adapted for GitHub Copilot — see [GitHub Copilot](#github-copilot).
+
+## Claude Code
+
+### Prerequisite
 
 Install the CLI itself first — this plugin doesn't bundle it:
 ```bash
@@ -33,11 +41,11 @@ adrplus --version
 
 **`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later, not yet published to NuGet as of this writing** (latest published release is beta5) — AdrPlus's own plugin system (unrelated to this Claude Code plugin). The skill checks for these commands before using them and won't invent them on an older install.
 
-## Install
+### Install
 
 From a Claude Code session:
 ```
-/plugin marketplace add FRACerqueira/AdrPlus-Claude-Plugin
+/plugin marketplace add FRACerqueira/AdrPlus-IA-Plugin
 /plugin install adrplus@adrplus-tools
 ```
 
@@ -57,7 +65,7 @@ Once installed, Claude will need permission to run `adrplus` via Bash. If you do
 ```
 (A plugin cannot grant this for you — see the [plugin permissions docs](https://code.claude.com/docs/en/plugins-reference.md).)
 
-## Update
+### Update
 
 Third-party marketplaces don't auto-update by default. After a new version is pushed to this repo, refresh the catalog with:
 ```
@@ -67,6 +75,33 @@ Third-party marketplaces don't auto-update by default. After a new version is pu
 
 Prefer not to do this manually every time? Run `/plugin`, go to the **Marketplaces** tab, select `adrplus-tools`, and enable auto-update — Claude Code will then refresh the catalog and update installed plugins from it in the background on startup.
 
+## GitHub Copilot
+
+Since November 2025, GitHub Copilot supports the same open [Agent Skills](https://agentskills.io/specification) standard as Claude Code, plus its own custom-agent format (`.github/agents/*.agent.md`). This repo ships a `copilot/` mirror of `skills/manage-adrs` and `agents/*.md`, adapted for Copilot:
+
+```
+copilot/
+├── skills/
+│   └── manage-adrs/SKILL.md
+└── agents/
+    ├── adr-auditor.agent.md
+    ├── adr-indexer.agent.md
+    └── adr-decision-check.agent.md
+```
+
+**There's no marketplace for Copilot** — unlike `/plugin install` above, there's no centralized install. Copy the files into the repo where you manage ADRs:
+```bash
+cp -r copilot/skills/manage-adrs your-repo/.github/skills/
+cp copilot/agents/*.agent.md your-repo/.github/agents/
+```
+(or use `.claude/skills`, `.agents/skills`, or `~/.copilot/skills` for personal, cross-repo use — see [GitHub's agent skills docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) for the full discovery rules.)
+
+**Known gap — tool mapping not yet validated.** Claude Code's tool names (`Bash`, `Read`, `Write`, `Glob`) don't map 1:1 to Copilot's (`runCommands`, `codebase`, `editFiles`, `search`, ...). Each `copilot/agents/*.agent.md` file documents its best-effort mapping in a "Tool mapping (a validar)" section — verify these against a real Copilot session before relying on them, and fix the file's `tools:` frontmatter if any identifier is rejected. `adr-decision-check.agent.md` also flags its background-invocation behavior as unconfirmed on Copilot.
+
+`copilot/` is not generated from `skills/`/`agents/` — there's no sync tooling yet. If you change the canonical Claude files, update `copilot/` by hand to keep them consistent.
+
 ## Versioning
+
+Applies to the Claude Code plugin only — `copilot/` has no version/update mechanism of its own (see [GitHub Copilot](#github-copilot)).
 
 `plugin.json`'s `version` and the matching plugin entry's `version` in `marketplace.json` must be bumped together on every meaningful change — Claude Code only picks up an update when that version string changes (or, if you drop the `version` field, on every new commit). Forgetting one of the two files leaves them out of sync and `/plugin marketplace update` won't see a new release.

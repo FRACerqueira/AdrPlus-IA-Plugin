@@ -76,6 +76,20 @@ def main():
             for field in ("name", "description"):
                 check(field in fm, f"{agent_md.relative_to(ROOT)}: frontmatter missing '{field}'")
 
+    for skill_md in sorted((ROOT / "copilot" / "skills").glob("*/SKILL.md")):
+        fm = parse_frontmatter(skill_md)
+        check(fm is not None, f"{skill_md.relative_to(ROOT)}: missing YAML frontmatter")
+        if fm:
+            for field in ("name", "description"):
+                check(field in fm, f"{skill_md.relative_to(ROOT)}: frontmatter missing '{field}'")
+
+    for agent_md in sorted((ROOT / "copilot" / "agents").glob("*.agent.md")):
+        fm = parse_frontmatter(agent_md)
+        check(fm is not None, f"{agent_md.relative_to(ROOT)}: missing YAML frontmatter")
+        if fm:
+            for field in ("name", "description"):
+                check(field in fm, f"{agent_md.relative_to(ROOT)}: frontmatter missing '{field}'")
+
     if errors:
         print("Validation FAILED:")
         for e in errors:
