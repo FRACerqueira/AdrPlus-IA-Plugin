@@ -9,7 +9,7 @@
       "name": "adrplus",
       "source": "./",
       "description": "Manage Architecture Decision Records via the adrplus CLI.",
-      "version": "0.8.0",
+      "version": "0.9.0",
       "author": {
         "name": "Fernando Cerqueira"
       },

@@ -3,6 +3,14 @@
 Versions refer to `.claude-plugin/plugin.json` / `marketplace.json` (the Claude Code plugin only —
 `copilot/` has no version of its own, see [README.md](README.md#versioning)).
 
+## 0.9.0 — 2026-08-07
+
+- Raised the minimum supported `adrplus` version from beta3 to **v1.0.0-rc1** (matching AdrPlus's own
+  README/NugetREADME, which made the same change) - beta1 through beta9 are no longer supported at
+  all, not just beta1/beta2. Updated README.md, both `manage-adrs` `SKILL.md` files,
+  `scripts/check_adrplus_compat.py` (now flags *any* beta pre-release, not just one below beta3), and
+  `.github/workflows/validate.yml`'s `adrplus-compat` matrix (both the "latest" and "minimum" legs).
+
 ## 0.8.0 — 2026-08-07
 
 - Corrected README's Update section: `/plugin marketplace update` reports how many plugins it bumped and

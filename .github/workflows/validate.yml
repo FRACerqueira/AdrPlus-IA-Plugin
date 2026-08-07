@@ -16,7 +16,8 @@ jobs:
 
   # Two variants, so both ends of the supported range are actually exercised - previously this
   # job only ever installed the newest 1.x release, so a regression specific to the documented
-  # floor (beta3 - see README.md "Prerequisite") would never have been caught here:
+  # floor (rc1 - see README.md "Prerequisite"; beta1-beta9 are no longer supported at all) would
+  # never have been caught here:
   #   - "latest": always resolves to the highest 1.x adrplus release, including pre-releases. What
   #     catches drift between SKILL.md's documented flags and the CLI's real --help output as new
   #     1.x releases ship.
@@ -29,9 +30,9 @@ jobs:
       matrix:
         include:
           - label: latest
-            adrplus_version: "[1.0.0-beta3,2.0.0)"
+            adrplus_version: "[1.0.0-rc1,2.0.0)"
           - label: minimum
-            adrplus_version: "1.0.0-beta3"
+            adrplus_version: "1.0.0-rc1"
     name: adrplus-compat (${{ matrix.label }})
     steps:
       - uses: actions/checkout@v4

@@ -38,9 +38,9 @@ dotnet tool update -g adrplus
 adrplus --version
 ```
 
-**Requires `adrplus` v1.0.0-beta3 or later (any 1.x release, including pre-releases).** Versions before beta1 unconditionally drew a startup banner and could fall into an interactive first-run wizard on every command — both crashed or hung when driven non-interactively (exactly how an agent runs `adrplus` via its shell/terminal tool, regardless of which assistant). beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a machine/version where `adrplus` had never been run interactively — beta3 removed that dependency entirely. CI installs both the documented minimum (beta3) and the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
+**Requires `adrplus` v1.0.0-rc1 or later.** Earlier pre-releases aren't supported: versions before beta1 unconditionally drew a startup banner and could fall into an interactive first-run wizard on every command, and beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a machine/version where `adrplus` had never been run interactively — both crashed or hung when driven non-interactively (exactly how an agent runs `adrplus` via its shell/terminal tool, regardless of which assistant). CI installs both the documented minimum (rc1) and the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
 
-**`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later** — published to NuGet since beta6 (latest published release as of this writing is beta9) — AdrPlus's own plugin system (unrelated to either integration in this repo). The skill checks for these commands before using them and won't invent them on an older install.
+**`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later** — automatically satisfied by the v1.0.0-rc1 floor above — AdrPlus's own plugin system (unrelated to either integration in this repo). The skill checks for these commands before using them and won't invent them on an older install.
 
 ## Claude Code
 

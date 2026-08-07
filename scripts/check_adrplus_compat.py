@@ -30,12 +30,6 @@ CRASH_MARKERS = (
     "ConsoleColor enum",
 )
 
-# The specific regression class this script exists to catch (see beta1/beta2 notes in the
-# skill/README): only a beta-numbered adrplus below this is known to crash/hang non-interactively.
-# This is a narrow, adrplus-specific heuristic, not a general SemVer comparator - it doesn't
-# attempt to order beta vs. rc vs. stable, only "is this a beta build below the documented floor".
-MIN_ADRPLUS_BETA = 3
-
 errors = []
 
 
@@ -75,18 +69,14 @@ def check_no_crash(label, result):
 
 
 def check_minimum_version(version_output):
-    """Flags an installed adrplus below the documented minimum (beta3) - a narrow, adrplus-
-    specific heuristic (see MIN_ADRPLUS_BETA), not a general version comparator. Silently does
-    nothing for a stable/rc build or a beta at/above the floor, exactly like the plugin's own
-    docs describe "beta3 or later, including any 1.x release" as sufficient."""
-    m = re.search(r"beta(\d+)", version_output, re.IGNORECASE)
-    if m and int(m.group(1)) < MIN_ADRPLUS_BETA:
+    """Flags an installed adrplus that's still on a beta pre-release - this plugin's documented
+    floor is v1.0.0-rc1 or later, so any beta build (beta1 through the last one, beta9) is now
+    below it. A narrow, adrplus-specific heuristic, not a general version comparator: it doesn't
+    need to order beta/rc/stable against each other, only recognize "this is a beta at all"."""
+    if re.search(r"beta\d+", version_output, re.IGNORECASE):
         errors.append(
-            f"installed adrplus version ({version_output.strip()!r}) is a beta below the documented "
-            f"minimum (beta{MIN_ADRPLUS_BETA}) - README.md and both SKILL.md files promise support "
-            f"from beta{MIN_ADRPLUS_BETA} onward, but this CI job otherwise only ever installs the "
-            f"newest 1.x release, so a regression specific to the beta1/beta2 era would never be "
-            f"caught here."
+            f"installed adrplus version ({version_output.strip()!r}) is a beta pre-release - "
+            f"README.md and both SKILL.md files require v1.0.0-rc1 or later."
         )
 
 
