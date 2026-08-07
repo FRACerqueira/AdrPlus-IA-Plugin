@@ -4,7 +4,7 @@ description: Use to check whether a set of pending code changes represents an ar
 tools: ["codebase", "search", "runCommands"]  # read-only: mapped from Claude Code tools "Read, Grep, Glob, Bash" — do not add editFiles or any write-capable tool
 ---
 
-> Ported from this repo's Claude Code agent (`agents/adr-decision-check.md`). Body instructions are unchanged from the canonical source except where noted below. There is no generator yet: if the canonical Claude version changes, re-sync this file by hand. **Last synced: 2026-08-06.**
+> Ported from this repo's Claude Code agent (`agents/adr-decision-check.md`). Body instructions are unchanged from the canonical source except for the "## Invocation mode" section immediately below, which does not exist in the Claude original (there, this content lives only in the frontmatter `description`) - it's a deliberate Copilot-specific addition: the Claude Code version is unconditionally non-blocking, but not every Copilot surface supports launching a subagent non-blocking, so this section spells out an explicit foreground fallback for when it isn't available, rather than leaving that surface unable to run this check at all. There is no generator yet: if the canonical Claude version changes, re-sync this file by hand. **Last synced: 2026-08-07.**
 
 ## Invocation mode
 

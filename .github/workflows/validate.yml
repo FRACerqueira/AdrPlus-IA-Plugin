@@ -14,21 +14,31 @@ jobs:
           python-version: "3.12"
       - run: python scripts/validate_plugin.py
 
-  # Always resolves to the highest 1.x adrplus release, including pre-releases
-  # (see README.md "Prerequisite" for the minimum: 1.0.0-beta3). This job is
-  # what catches drift between SKILL.md's documented flags and the CLI's real
-  # --help output as new 1.x releases ship - bump the range's floor here (and
-  # re-verify skill/agents) only if the minimum supported version changes.
+  # Two variants, so both ends of the supported range are actually exercised - previously this
+  # job only ever installed the newest 1.x release, so a regression specific to the documented
+  # floor (beta3 - see README.md "Prerequisite") would never have been caught here:
+  #   - "latest": always resolves to the highest 1.x adrplus release, including pre-releases. What
+  #     catches drift between SKILL.md's documented flags and the CLI's real --help output as new
+  #     1.x releases ship.
+  #   - "minimum": pinned to exactly the documented floor. Bump this (and re-verify skill/agents)
+  #     only if the minimum supported version changes.
   adrplus-compat:
     runs-on: ubuntu-latest
-    env:
-      ADRPLUS_VERSION: "[1.0.0-beta3,2.0.0)"
+    strategy:
+      fail-fast: false
+      matrix:
+        include:
+          - label: latest
+            adrplus_version: "[1.0.0-beta3,2.0.0)"
+          - label: minimum
+            adrplus_version: "1.0.0-beta3"
+    name: adrplus-compat (${{ matrix.label }})
     steps:
       - uses: actions/checkout@v4
       - uses: actions/setup-dotnet@v4
         with:
           dotnet-version: "8.0.x"
-      - run: dotnet tool install -g adrplus --version "${{ env.ADRPLUS_VERSION }}"
+      - run: dotnet tool install -g adrplus --version "${{ matrix.adrplus_version }}"
       - run: echo "$HOME/.dotnet/tools" >> "$GITHUB_PATH"
       - uses: actions/setup-python@v5
         with:

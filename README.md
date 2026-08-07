@@ -23,11 +23,10 @@ Already installed and just want to know what to actually type? See **[HOWTO.md](
 
 The canonical source for all four lives under `skills/` and `agents/` (Claude Code format, described below). `copilot/` mirrors the same four, adapted for GitHub Copilot — see [GitHub Copilot](#github-copilot).
 
-## Claude Code
+## Prerequisite
 
-### Prerequisite
-
-Install the CLI itself first — this plugin doesn't bundle it:
+Applies to both integrations - `adrplus` itself is a standalone CLI, not something either plugin
+bundles. Install it first:
 ```bash
 dotnet tool install -g adrplus
 adrplus --version
@@ -39,9 +38,11 @@ dotnet tool update -g adrplus
 adrplus --version
 ```
 
-**Requires `adrplus` v1.0.0-beta3 or later (any 1.x release, including pre-releases).** Versions before beta1 unconditionally drew a startup banner and could fall into an interactive first-run wizard on every command — both crashed or hung when driven non-interactively (exactly how Claude runs `adrplus` via the Bash tool). beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a machine/version where `adrplus` had never been run interactively — beta3 removed that dependency entirely. CI always installs the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
+**Requires `adrplus` v1.0.0-beta3 or later (any 1.x release, including pre-releases).** Versions before beta1 unconditionally drew a startup banner and could fall into an interactive first-run wizard on every command — both crashed or hung when driven non-interactively (exactly how an agent runs `adrplus` via its shell/terminal tool, regardless of which assistant). beta1/beta2 still crashed non-interactively on a genuinely fresh repository or a machine/version where `adrplus` had never been run interactively — beta3 removed that dependency entirely. CI installs both the documented minimum (beta3) and the highest matching 1.x release — see `.github/workflows/validate.yml` for the automated compatibility check.
 
-**`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later** — published to NuGet since beta6 (latest published release as of this writing is beta9) — AdrPlus's own plugin system (unrelated to this Claude Code plugin). The skill checks for these commands before using them and won't invent them on an older install.
+**`adrplus plugins`/`adrplus sync` need v1.0.0-beta6 or later** — published to NuGet since beta6 (latest published release as of this writing is beta9) — AdrPlus's own plugin system (unrelated to either integration in this repo). The skill checks for these commands before using them and won't invent them on an older install.
+
+## Claude Code
 
 ### Install
 
@@ -73,13 +74,13 @@ Third-party marketplaces don't auto-update by default. After a new version is pu
 ```
 /plugin marketplace update adrplus-tools
 ```
-(`adrplus-tools` is the marketplace name from `marketplace.json`, not the GitHub repo name.) Then open `/plugin`, find `adrplus`, and update/reinstall it from there so your installed copy actually moves to the newer version — a marketplace refresh alone doesn't confirm it updates an already-installed plugin.
+(`adrplus-tools` is the marketplace name from `marketplace.json`, not the GitHub repo name.) Watch its own output — in practice this command reports how many plugins it bumped (e.g. `Updated 1 marketplace (1 plugin bumped)`), and your installed copy moves to the new version right then, no extra step needed. If it reports 0 plugins bumped but you know a newer version exists, open `/plugin`, find `adrplus`, and update/reinstall it from there instead.
 
 Prefer not to do this manually every time? Run `/plugin`, go to the **Marketplaces** tab, select `adrplus-tools`, and enable auto-update — Claude Code will then refresh the catalog and update installed plugins from it in the background on startup.
 
 ## GitHub Copilot
 
-Since November 2025, GitHub Copilot supports the same open [Agent Skills](https://agentskills.io/specification) standard as Claude Code, plus its own custom-agent format (`.github/agents/*.agent.md`). This repo ships a `copilot/` mirror of `skills/manage-adrs` and `agents/*.md`, adapted for Copilot:
+GitHub Copilot supports the same open [Agent Skills](https://agentskills.io/specification) standard as Claude Code, plus its own custom-agent format (`.github/agents/*.agent.md`). This repo ships a `copilot/` mirror of `skills/manage-adrs` and `agents/*.md`, adapted for Copilot:
 
 ```
 copilot/
@@ -98,7 +99,7 @@ cp copilot/agents/*.agent.md your-repo/.github/agents/
 ```
 (or use `.claude/skills`, `.agents/skills`, or `~/.copilot/skills` for personal, cross-repo use — see [GitHub's agent skills docs](https://docs.github.com/en/copilot/concepts/agents/about-agent-skills) for the full discovery rules.)
 
-Claude Code's tool names (`Bash`, `Read`, `Write`, `Glob`) don't map 1:1 to Copilot's (`runCommands`, `codebase`, `editFiles`, `search`, ...) — each `copilot/agents/*.agent.md` file's `tools:` frontmatter carries the translated list.
+Claude Code's tool names (`Bash`, `Read`, `Write`, `Glob`, `Grep`) don't map 1:1 to Copilot's (`runCommands`, `codebase`, `editFiles`, `search`, ...) — each `copilot/agents/*.agent.md` file's `tools:` frontmatter carries the translated list (`Grep` and `Glob` both fold into Copilot's single `search` tool). This mapping only applies to the three `.agent.md` custom agents; `copilot/skills/manage-adrs/SKILL.md`'s own `allowed-tools` field follows a different, still-unsettled convention across Copilot surfaces — see the caveat in that file for specifics.
 
 `copilot/` is not generated from `skills/`/`agents/` — there's no sync tooling yet. If you change the canonical Claude files, update `copilot/` by hand to keep them consistent.
 
